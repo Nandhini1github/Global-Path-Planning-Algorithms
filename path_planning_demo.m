@@ -30,13 +30,21 @@ for k=1:3
     vehicle(k)=scatter(ax(k),nan,nan,80,[.08 .35 .9],'filled','MarkerEdgeColor','white');
     title(ax(k),names{k},'FontSize',14);labels(k)=xlabel(ax(k),'','FontSize',9);
 end
-sgtitle(layout,'Same map, start and goal | Orange: explored  Purple: current  Blue: final path','FontSize',14,'FontWeight','bold');
+sgtitle(layout,'Orange: explored | Purple: current | Node label: cost from start | Red 1: route edge weight','FontSize',12,'FontWeight','bold');
 video=VideoWriter('path_planning_comparison.mp4','MPEG-4');video.FrameRate=12;video.Quality=95;open(video);
 steps=max(cellfun(@numel,traces));
+nodeCostLabels=cell(1,3);
+for k=1:3
+    nodeCostLabels{k}=gobjects(1,numel(traces{k}));
+end
 for frame=1:steps
     for k=1:3
         n=min(frame,numel(traces{k}));[rr,cc]=ind2sub([rows cols],traces{k}(1:n));
         set(explored(k),'XData',cc,'YData',rr);set(current(k),'XData',cc(end),'YData',rr(end));
+        if frame<=numel(traces{k})
+            nodeCostLabels{k}(n)=text(ax(k),cc(end)+0.12,rr(end)-0.16,sprintf('%d',gs{k}(n)), ...
+                'FontSize',6,'Color',[.05 .25 .6],'FontWeight','bold','Clipping','on');
+        end
         if k==1, detail=sprintf('g=%d, h=%d, f=%d',gs{k}(n),hs{k}(n),gs{k}(n)+hs{k}(n));
         elseif k==2, detail=sprintf('g=%d (distance from start)',gs{k}(n));
         else, detail=sprintf('depth=%d (moves from start)',gs{k}(n));end

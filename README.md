@@ -1,4 +1,4 @@
-﻿# Global Path Planning Algorithms
+# Global Path Planning Algorithms
 
 A MATLAB demonstration of A*, Dijkstra, and breadth-first search (BFS) on the same obstacle map. The animation highlights each node as it is explored, shows its current cost, and draws each final shortest path step by step.
 
@@ -18,9 +18,9 @@ The script generates `path_planning_comparison.mp4`, `comparison_final.png`, and
 
 ## Map and plot
 
-The 10-by-14 grid represents a graph: every free cell is a node; adjacent horizontal or vertical free cells are connected by an edge with weight 1. Dark cells are blocked. All algorithms use the same start and goal, and no diagonal movement is allowed. Green marks the start, red marks the goal, orange marks explored nodes, purple marks the current node, and blue marks the final route. The final path's edges are labeled `1`, so adding them gives the path cost in moves.
+The 10-by-14 grid represents a graph: every free cell is a node; adjacent horizontal or vertical free cells are connected by an edge with weight 1. Dark cells are blocked. All algorithms use the same start and goal, and no diagonal movement is allowed. Green marks the start, red marks the goal, orange marks explored nodes, purple marks the current node, and blue marks the final route. The final path's edges are labeled with a red `1`, so adding them gives the path cost in moves. Every traversable edge has weight 1; only final-route edge weights are labeled to keep the map readable.
 
-The current node's coordinates and cost appear below each plot. A* displays `g` (distance from start), `h` (Manhattan distance to goal), and `f = g + h`; Dijkstra displays `g`; BFS displays the number of moves from the start. These are calculated scores, not fixed node weights.
+The blue number beside each explored node shows its calculated cost from the start (for BFS, its depth in moves). These are path costs, not fixed node weights. The current node's coordinates and cost appear below each plot. A* displays `g` (distance from start), `h` (Manhattan distance to goal), and `f = g + h`; Dijkstra displays `g`; BFS displays the number of moves from the start. These are calculated scores, not fixed node weights.
 
 ## Algorithms
 
