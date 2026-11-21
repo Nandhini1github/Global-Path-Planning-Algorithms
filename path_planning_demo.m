@@ -30,7 +30,7 @@ for k=1:3
     vehicle(k)=scatter(ax(k),nan,nan,80,[.08 .35 .9],'filled','MarkerEdgeColor','white');
     title(ax(k),names{k},'FontSize',14);labels(k)=xlabel(ax(k),'','FontSize',9);
 end
-sgtitle(layout,'Orange: explored | Purple: current | Node label: cost from start | Red 1: route edge weight','FontSize',12,'FontWeight','bold');
+sgtitle(layout,'\color[rgb]{1 0.65 0.08}\bullet \color{black}Explored    \color[rgb]{0.7 0.15 0.8}\bullet \color{black}Current    \color[rgb]{0.05 0.25 0.6}9 \color{black}Node cost    \color[rgb]{0.55 0.1 0.1}1 \color{black}Edge weight    \color[rgb]{0.08 0.35 0.9}\bf- \color{black}Final path','FontSize',12,'FontWeight','bold','Interpreter','tex');
 video=VideoWriter('path_planning_comparison.mp4','MPEG-4');video.FrameRate=12;video.Quality=95;open(video);
 steps=max(cellfun(@numel,traces));
 nodeCostLabels=cell(1,3);
