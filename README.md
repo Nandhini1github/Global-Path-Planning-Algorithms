@@ -1,8 +1,8 @@
-﻿# Global Path Planning Algorithms
+# Global Path Planning Algorithms
 
 A MATLAB demonstration of A*, Dijkstra, and breadth-first search (BFS) on the same obstacle map. The animation highlights each node as it is explored, shows its current cost, and draws each final shortest path step by step.
 
-![Final MATLAB comparison](comparison_final.png)
+![Animated MATLAB comparison of A*, Dijkstra, and BFS](path_planning_preview.gif)
 
 [Watch the comparison video](path_planning_comparison.mp4) · [View measured results](comparison_results.csv)
 
