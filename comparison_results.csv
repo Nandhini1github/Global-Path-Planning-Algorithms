@@ -1,4 +1,4 @@
 Algorithm,Moves,ExploredNodes,RuntimeSeconds
-A*,18,63,0.0232896
-Dijkstra,18,119,0.0099084
-RRT (random tree),18,90,0.0412037
+A*,18,63,0.0183053
+Dijkstra,18,119,0.0026058
+BFS,18,119,0.0020357

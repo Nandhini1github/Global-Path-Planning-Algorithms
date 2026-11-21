@@ -1,5 +1,5 @@
 function path_planning_demo
-% PATH_PLANNING_DEMO Compare A*, Dijkstra and graph-based RRT on one map.
+% PATH_PLANNING_DEMO Compare A*, Dijkstra and BFS on one map.
 % Run: matlab -batch "path_planning_demo" from this directory.
 close all; clc;
 rows=10; cols=14;
@@ -10,13 +10,10 @@ blocked(1:7,11)=true; blocked(2,11)=false; blocked(6,11)=false;
 start=sub2ind([rows cols],2,2); goal=sub2ind([rows cols],9,13);
 [tA,pA,cA,gA,hA]=search_grid(blocked,start,goal,true);
 [tD,pD,cD,gD,hD]=search_grid(blocked,start,goal,false);
-[tR,pR,cR,gR]=rrt_grid(blocked,start,goal,42,20000);
-if isempty(pA)||isempty(pD)||isempty(pR), error('A planner did not find a route.'); end
-if numel(pA)~=numel(pD), error('A* and Dijkstra disagree on shortest distance.'); end
-names={'A*','Dijkstra','RRT (random tree)'}; traces={tA,tD,tR}; paths={pA,pD,pR}; costs=[cA cD cR]; gs={gA,gD,gR}; hs={hA,hD,zeros(size(gR))};
-complexity={'Time O(V^2 + E) | Space O(V + E)', ...
-    'Time O(V^2 + E) | Space O(V + E)', ...
-    'Time O(TV) | Space O(V), on this grid'};
+[tB,pB,cB,gB]=bfs_grid(blocked,start,goal);
+if isempty(pA)||isempty(pD)||isempty(pB), error('A planner did not find a route.'); end
+if numel(pA)~=numel(pD) || numel(pA)~=numel(pB), error('The three algorithms disagree on shortest distance.'); end
+names={'A*','Dijkstra','BFS'}; traces={tA,tD,tB}; paths={pA,pD,pB}; costs=[cA cD cB]; gs={gA,gD,gB}; hs={hA,hD,zeros(size(gB))};
 fig=figure('Name','Path planning comparison','Color','white','Position',[100 100 1440 650], 'Visible','off');
 layout=tiledlayout(fig,1,3,'TileSpacing','compact','Padding','compact');
 ax=gobjects(1,3); explored=gobjects(1,3); current=gobjects(1,3); finalpath=gobjects(1,3); vehicle=gobjects(1,3); labels=gobjects(1,3);
@@ -42,7 +39,7 @@ for frame=1:steps
         set(explored(k),'XData',cc,'YData',rr);set(current(k),'XData',cc(end),'YData',rr(end));
         if k==1, detail=sprintf('g=%d, h=%d, f=%d',gs{k}(n),hs{k}(n),gs{k}(n)+hs{k}(n));
         elseif k==2, detail=sprintf('g=%d (distance from start)',gs{k}(n));
-        else, detail=sprintf('g=%d (tree path cost)',gs{k}(n));end
+        else, detail=sprintf('depth=%d (moves from start)',gs{k}(n));end
         set(labels(k),'String',{sprintf('Step %d / %d | Node (%d,%d)',n,numel(traces{k}),cc(end),rr(end)),detail,'Each road edge weight = 1'});
     end
     drawnow; writeVideo(video,getframe(fig));
@@ -62,7 +59,7 @@ for frame=1:max(cellfun(@numel,paths))
         n=min(frame,numel(paths{k}));[rr,cc]=ind2sub([rows cols],paths{k}(1:n));
         set(finalpath(k),'XData',cc,'YData',rr);set(vehicle(k),'XData',cc(end),'YData',rr(end));set(current(k),'XData',nan,'YData',nan);
         if n>1,set(edgeLabels{k}(1:n-1),'Visible','on');end
-        if k==3, label='Feasible; not guaranteed shortest';else,label='Shortest on this grid';end
+        label='Shortest on this grid';
         set(labels(k),'String',{sprintf('%s: %d moves',label,numel(paths{k})-1),'Each blue road edge has weight 1'});
     end
     drawnow;writeVideo(video,getframe(fig));
@@ -95,19 +92,18 @@ end
 path=extract_path(prev,start,goal);elapsed=toc;
 end
 
-function [trace,path,elapsed,traceG]=rrt_grid(blocked,start,goal,seed,limit)
-% Educational discrete RRT: random free-cell sample, nearest tree node,
-% extend one grid edge towards the sample. Stops on first feasible path.
-tic;rng(seed,'twister');[rows,cols]=size(blocked);V=numel(blocked);
-free=find(~blocked);inTree=false(V,1);inTree(start)=true;prev=zeros(V,1);trace=start;depth=zeros(V,1);traceG=0;
-for attempt=1:limit
-    sample=free(randi(numel(free)));nodes=find(inTree);
-    [nr,nc]=ind2sub([rows cols],nodes);[sr,sc]=ind2sub([rows cols],sample);
-    [~,idx]=min(abs(nr-sr)+abs(nc-sc));u=nodes(idx); options=neighbors(blocked,u);options=options(~inTree(options));
-    if isempty(options),continue;end
-    [r,c]=ind2sub([rows cols],options);[~,idx]=min(abs(r-sr)+abs(c-sc));v=options(idx);
-    prev(v)=u;inTree(v)=true;depth(v)=depth(u)+1;trace(end+1)=v;traceG(end+1)=depth(v); %#ok<AGROW>
-    if v==goal,break;end
+function [trace,path,elapsed,traceG]=bfs_grid(blocked,start,goal)
+% FIFO queue and mark on discovery: shortest number of moves on unit edges.
+tic; V=numel(blocked); queue=zeros(V,1);head=1;tail=1;queue(1)=start;
+discovered=false(V,1);discovered(start)=true;prev=zeros(V,1);depth=zeros(V,1);trace=[];traceG=[];
+while head<=tail
+    u=queue(head);head=head+1;trace(end+1)=u;traceG(end+1)=depth(u); %#ok<AGROW>
+    if u==goal,break;end
+    for v=neighbors(blocked,u)
+        if ~discovered(v)
+            discovered(v)=true;prev(v)=u;depth(v)=depth(u)+1;tail=tail+1;queue(tail)=v;
+        end
+    end
 end
 path=extract_path(prev,start,goal);elapsed=toc;
 end
