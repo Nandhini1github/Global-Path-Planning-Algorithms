@@ -1,4 +1,4 @@
-# Global Path Planning Algorithms
+﻿# Global Path Planning Algorithms
 
 A MATLAB demonstration of A*, Dijkstra, and breadth-first search (BFS) on the same obstacle map. The animation highlights each node as it is explored, shows its current cost, and draws each final shortest path step by step.
 
@@ -34,8 +34,8 @@ Let `V` be the number of grid cells and `E` the number of traversable neighbor c
 
 | Algorithm | Best-case time | Worst-case time | Best-case space | Worst-case space | Implementation |
 | --- | --- | --- | --- | --- | --- |
-| A* | O(V) | O(V? + E) | O(V) | O(V) | Array scan selects the lowest-score open node. |
-| Dijkstra | O(V) | O(V? + E) | O(V) | O(V) | Array scan selects the lowest-distance open node. |
+| A* | O(V) | O(V^2 + E) | O(V) | O(V) | Array scan selects the lowest-score open node. |
+| Dijkstra | O(V) | O(V^2 + E) | O(V) | O(V) | Array scan selects the lowest-distance open node. |
 | BFS | O(V) | O(V + E) | O(V) | O(V) | An array-backed queue visits each reachable node once. |
 
 The best case assumes the start is already the goal. Even then, each implementation initializes arrays sized to all V grid cells, so best-case time and auxiliary space are O(V), not O(1). These bounds are for this code; an implementation that allocates memory lazily can have different best-case costs.
@@ -45,3 +45,4 @@ Using an appropriate heap can improve the usual graph-search time bound for A* o
 ## Validation and limitations
 
 The script checks that all three path lengths match and reports an error if any planner fails or disagrees. The included video, image, and CSV are produced by the script. Equal-length shortest paths can have different shapes depending on tie-breaking. This grid is an educational model; it does not simulate vehicle dynamics, road traffic, or actual driving.
+
