@@ -40,7 +40,7 @@ Let `V` be the number of grid cells and `E` the number of traversable neighbor c
 
 The best case assumes the start is already the goal. Even then, each implementation initializes arrays sized to all V grid cells, so best-case time and auxiliary space are O(V), not O(1). These bounds are for this code; an implementation that allocates memory lazily can have different best-case costs.
 
-Using an appropriate heap can improve the usual graph-search time bound for A* or Dijkstra. The measured runtime in the CSV is a single local run, not a statistically reliable benchmark.
+Using an appropriate heap can improve the usual graph-search time bound for A* or Dijkstra. The measured runtime in the CSV is a single local run.
 
 ## Validation and limitations
 
