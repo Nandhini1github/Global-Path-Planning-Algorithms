@@ -32,11 +32,13 @@ The current node's coordinates and cost appear below each plot. A* displays `g` 
 
 Let `V` be the number of grid cells and `E` the number of traversable neighbor connections. Bounds below describe these implementations. The grid has at most four neighbors per cell, so `E = O(V)`. Edges are generated as needed, rather than stored in an adjacency list.
 
-| Algorithm | Worst-case time | Auxiliary space | Implementation |
-| --- | --- | --- | --- |
-| A* | O(V² + E) | O(V) | Array scan selects the lowest-score open node. |
-| Dijkstra | O(V² + E) | O(V) | Array scan selects the lowest-distance open node. |
-| BFS | O(V + E) | O(V) | An array-backed queue visits each reachable node once. |
+| Algorithm | Best-case time | Worst-case time | Best-case space | Worst-case space | Implementation |
+| --- | --- | --- | --- | --- | --- |
+| A* | O(V) | O(V? + E) | O(V) | O(V) | Array scan selects the lowest-score open node. |
+| Dijkstra | O(V) | O(V? + E) | O(V) | O(V) | Array scan selects the lowest-distance open node. |
+| BFS | O(V) | O(V + E) | O(V) | O(V) | An array-backed queue visits each reachable node once. |
+
+The best case assumes the start is already the goal. Even then, each implementation initializes arrays sized to all V grid cells, so best-case time and auxiliary space are O(V), not O(1). These bounds are for this code; an implementation that allocates memory lazily can have different best-case costs.
 
 Using an appropriate heap can improve the usual graph-search time bound for A* or Dijkstra. The measured runtime in the CSV is a single local run, not a statistically reliable benchmark.
 
